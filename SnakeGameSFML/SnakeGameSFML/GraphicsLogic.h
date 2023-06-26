@@ -10,6 +10,8 @@ sf::Texture snakeBodyTexture;
 sf::Texture snakeTailTexture;
 sf::Texture snakeRotateTexture;
 sf::Texture snakeDeadTexture;
+sf::Texture snakeHeadRotateTexture;
+sf::Texture snakeHeadRotateFlipTexture;
 
 sf::Sprite floor1Sprite;
 sf::Sprite floor2Sprite;
@@ -20,6 +22,8 @@ sf::Sprite snakeBodySprite;
 sf::Sprite snakeTailSprite;
 sf::Sprite snakeRotateSprite;
 sf::Sprite snakeDeadSprite;
+sf::Sprite snakeHeadRotateSprite;
+sf::Sprite snakeHeadRotateFlipSprite;
 
 void LoadTextures()
 {
@@ -33,6 +37,8 @@ void LoadTextures()
 	snakeTailTexture.loadFromFile("Graphics/snakeTail.png");
 	snakeRotateTexture.loadFromFile("Graphics/snakeRotate.png");
 	snakeDeadTexture.loadFromFile("Graphics/snakeDead.png");
+	snakeHeadRotateTexture.loadFromFile("Graphics/snakeHeadRotation.png");
+	snakeHeadRotateFlipTexture.loadFromFile("Graphics/snakeHeadFlipRotation.png");
 
 	floor1Sprite.setTexture(floor1Texture);
 	floor2Sprite.setTexture(floor2Texture);
@@ -43,6 +49,8 @@ void LoadTextures()
 	snakeTailSprite.setTexture(snakeTailTexture);
 	snakeRotateSprite.setTexture(snakeRotateTexture);
 	snakeDeadSprite.setTexture(snakeDeadTexture);
+	snakeHeadRotateSprite.setTexture(snakeHeadRotateTexture);
+	snakeHeadRotateFlipSprite.setTexture(snakeHeadRotateFlipTexture);
 }
 
 bool CheckIfRotatedSprite(int& i, std::vector<Snake>& snake, sf::Sprite& snakeSpriteToDraw)
@@ -98,17 +106,82 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 
 		switch (snake[i].currentDirection)
 		{
-		case UpDirection:
-			snakeSpriteToDraw.setRotation(0.0f);
+		case UpDirection://DONE
+			if (i == 0 && lastHeadDirection != UpDirection)
+			{
+				if (lastHeadDirection == LeftDirection)
+				{
+					std::cout << "snake[0] is up dir, lasHeadDir is leftDir\n";
+					snakeSpriteToDraw = snakeHeadRotateSprite;
+					snakeSpriteToDraw.setRotation(-90.0f);
+				}
+				else if (lastHeadDirection == RightDirection)
+				{
+					std::cout << "snake[0] is up dir, lasHeadDir is rightDir\n";
+					snakeSpriteToDraw = snakeHeadRotateFlipSprite;
+					snakeSpriteToDraw.setRotation(90.0f);
+				}
+			}
+			else
+				snakeSpriteToDraw.setRotation(0.0f);
 			break;
-		case DownDirection:
-			snakeSpriteToDraw.setRotation(180.0f);
+		case DownDirection://DONE
+			if (i == 0 && lastHeadDirection != DownDirection)
+			{
+				if (lastHeadDirection == LeftDirection)
+				{//Done
+					std::cout << "snake[0] is down dir, lasHeadDir is leftDir\n";
+					snakeSpriteToDraw = snakeHeadRotateFlipSprite;
+					snakeSpriteToDraw.setRotation(-90.0f);
+				}
+				else if (lastHeadDirection == RightDirection)
+				{//DONE
+					std::cout << "snake[0] is down dir, lasHeadDir is rightDir\n";
+					snakeSpriteToDraw = snakeHeadRotateSprite;
+					snakeSpriteToDraw.setRotation(90.0f);
+				}
+			}
+			else 
+				snakeSpriteToDraw.setRotation(180.0f);
+
 			break;
-		case RightDirection:
-			snakeSpriteToDraw.setRotation(90.0f);
+		case RightDirection://Done
+			if (i == 0 && lastHeadDirection != RightDirection)
+			{
+				if (lastHeadDirection == UpDirection)
+				{
+					std::cout << "snake[0] is right dir, lasHeadDir is upDir\n";
+					snakeSpriteToDraw = snakeHeadRotateSprite;
+					snakeSpriteToDraw.setRotation(0.0f);
+				}
+				else if (lastHeadDirection == DownDirection)
+				{
+					std::cout << "snake[0] is right dir, lasHeadDir is downDir\n";
+					snakeSpriteToDraw = snakeHeadRotateFlipSprite;
+					snakeSpriteToDraw.setRotation(180.0f);
+				}
+			}
+			else
+				snakeSpriteToDraw.setRotation(90.0f);
 			break;
-		case LeftDirection:
-			snakeSpriteToDraw.setRotation(-90.0f);
+		case LeftDirection://Done
+			if (i == 0 && lastHeadDirection != LeftDirection)
+			{
+				if (lastHeadDirection == UpDirection)
+				{
+					std::cout << "snake[0] is left dir, lasHeadDir is upDir\n";
+					snakeSpriteToDraw = snakeHeadRotateFlipSprite;
+					snakeSpriteToDraw.setRotation(0.0f);
+				}
+				else if (lastHeadDirection == DownDirection)
+				{
+					std::cout << "snake[0] is left dir, lasHeadDir is downtDir\n";
+					snakeSpriteToDraw = snakeHeadRotateSprite;
+					snakeSpriteToDraw.setRotation(180.0f);
+				}
+			}
+			else
+				snakeSpriteToDraw.setRotation(-90.0f);
 			break;
 		}
 

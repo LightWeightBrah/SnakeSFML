@@ -98,6 +98,9 @@ void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& appl
 		}
 		std::cout << "snake x " << snake[0].x << " y " << snake[0].y << "\n";
 
+
+		lastHeadDirection = snake[0].currentDirection;
+
 		switch (snake[0].currentDirection)
 		{
 			case UpDirection:
@@ -113,6 +116,7 @@ void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& appl
 				snake[0].x--;
 				break;
 		}
+
 
 		if (snake[0].x == (apple.position.x + 1) && snake[0].y == apple.position.y)
 		{

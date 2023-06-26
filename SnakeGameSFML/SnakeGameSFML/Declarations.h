@@ -6,7 +6,7 @@ const int pixelSize = 16;
 const float sizeMultiplier = 2.0f;
 const int size = pixelSize * sizeMultiplier;
 
-const float snakeMoveTimer = 0.15f;
+const float snakeMoveTimer = 1.15f;
 const int snakeInitSize = 20;
 int snakeSpawnY = mapHeight / 2;
 int snakeSpawnX = 5;
@@ -21,6 +21,7 @@ enum Direction
 	RightDirection
 };
 
+Direction lastHeadDirection = RightDirection;
 int GetRandom(int lowerBound, int higherBound);
 
 struct Apple
