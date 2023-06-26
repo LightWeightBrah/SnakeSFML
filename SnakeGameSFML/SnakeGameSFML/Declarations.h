@@ -6,8 +6,8 @@ const int pixelSize = 16;
 const float sizeMultiplier = 2.0f;
 const int size = pixelSize * sizeMultiplier;
 
-const float snakeMoveTimer = 1.15f;
-const int snakeInitSize = 20;
+const float snakeMoveTimer = 2.15f;
+const int snakeInitSize = 4;
 int snakeSpawnY = mapHeight / 2;
 int snakeSpawnX = 5;
 
@@ -54,6 +54,8 @@ struct Snake
 	sf::Sprite sprite;
 };
 
+void GameOver();
+bool LooseCheck(std::vector<Snake>& snake, int headX, int headY);
 void Scored(std::vector<Snake>& snake, Apple& apple);
 bool IsWall(int& x, int& y);
 void Place(sf::Sprite& sprite, sf::RenderWindow& window, float x, float y);

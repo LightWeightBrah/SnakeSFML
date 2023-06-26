@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <string>
 #include "Declarations.h"
 #include "GraphicsLogic.h"
 
@@ -81,6 +82,8 @@ void DrawMap(sf::RenderWindow& window, sf::Sprite& floor1Sprite, sf::Sprite& flo
 			Place(spriteToDraw, window, x, y);
 		}
 	}
+	window.draw(scoreText);
+
 }
 
 void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& apple)
@@ -96,23 +99,28 @@ void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& appl
 			snake[i].y = snake[i - 1].y;
 			snake[i].currentDirection = snake[i - 1].currentDirection;
 		}
-		std::cout << "snake x " << snake[0].x << " y " << snake[0].y << "\n";
-
-
 		lastHeadDirection = snake[0].currentDirection;
 
 		switch (snake[0].currentDirection)
 		{
 			case UpDirection:
+				if (LooseCheck(snake, snake[0].x, snake[0].y - 1))
+					return;
 				snake[0].y--;
 				break;
 			case DownDirection:
+				if (LooseCheck(snake, snake[0].x, snake[0].y + 1))
+					return;
 				snake[0].y++;
 				break;
 			case RightDirection:
+				if (LooseCheck(snake, snake[0].x + 1, snake[0].y))
+					return;
 				snake[0].x++;
 				break;
 			case LeftDirection:
+				if (LooseCheck(snake, snake[0].x - 1, snake[0].y))
+					return;
 				snake[0].x--;
 				break;
 		}
@@ -125,11 +133,37 @@ void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& appl
 	}
 }
 
+bool LooseCheck(std::vector<Snake>& snake, int headX, int headY)
+{
+	int x = headX - 1;
+	if (IsWall(x, headY))
+	{
+		GameOver();
+		return true;
+	}
+
+	for (int i = 1; i < snake.size(); i++)
+	{
+		if (headX == snake[i].x && headY == snake[i].y)
+		{
+			GameOver();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void GameOver()
+{
+	std::cout << "lost\n";
+}
+
 void Scored(std::vector<Snake>& snake, Apple& apple)
 {
 	score++;
-	std::cout << "Scored\n";
 	GenerateApple(apple, snake);
+	scoreText.setString("Score: " + std::to_string(score));
 
 	Direction lastDirection = snake[snake.size() - 1].currentDirection;
 	Snake newSnake(lastDirection);

@@ -25,6 +25,8 @@ sf::Sprite snakeDeadSprite;
 sf::Sprite snakeHeadRotateSprite;
 sf::Sprite snakeHeadRotateFlipSprite;
 
+sf::Font font;
+sf::Text scoreText;
 void LoadTextures()
 {
 	playerTexture.loadFromFile("Graphics/snakeHead.png");
@@ -51,6 +53,14 @@ void LoadTextures()
 	snakeDeadSprite.setTexture(snakeDeadTexture);
 	snakeHeadRotateSprite.setTexture(snakeHeadRotateTexture);
 	snakeHeadRotateFlipSprite.setTexture(snakeHeadRotateFlipTexture);
+
+	font.loadFromFile("Fonts/VCR_OSD_MONO_1.001.ttf");
+	scoreText.setFont(font);
+	scoreText.setCharacterSize(25);
+	scoreText.setFillColor(sf::Color::White);
+	scoreText.setStyle(sf::Text::Bold);
+	scoreText.setString("Score: 0");
+	scoreText.setPosition(2.0f, 2.0f);
 }
 
 bool CheckIfRotatedSprite(int& i, std::vector<Snake>& snake, sf::Sprite& snakeSpriteToDraw)
@@ -106,18 +116,16 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 
 		switch (snake[i].currentDirection)
 		{
-		case UpDirection://DONE
+		case UpDirection:
 			if (i == 0 && lastHeadDirection != UpDirection)
 			{
 				if (lastHeadDirection == LeftDirection)
 				{
-					std::cout << "snake[0] is up dir, lasHeadDir is leftDir\n";
 					snakeSpriteToDraw = snakeHeadRotateSprite;
 					snakeSpriteToDraw.setRotation(-90.0f);
 				}
 				else if (lastHeadDirection == RightDirection)
 				{
-					std::cout << "snake[0] is up dir, lasHeadDir is rightDir\n";
 					snakeSpriteToDraw = snakeHeadRotateFlipSprite;
 					snakeSpriteToDraw.setRotation(90.0f);
 				}
@@ -125,18 +133,16 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 			else
 				snakeSpriteToDraw.setRotation(0.0f);
 			break;
-		case DownDirection://DONE
+		case DownDirection:
 			if (i == 0 && lastHeadDirection != DownDirection)
 			{
 				if (lastHeadDirection == LeftDirection)
-				{//Done
-					std::cout << "snake[0] is down dir, lasHeadDir is leftDir\n";
+				{
 					snakeSpriteToDraw = snakeHeadRotateFlipSprite;
 					snakeSpriteToDraw.setRotation(-90.0f);
 				}
 				else if (lastHeadDirection == RightDirection)
-				{//DONE
-					std::cout << "snake[0] is down dir, lasHeadDir is rightDir\n";
+				{
 					snakeSpriteToDraw = snakeHeadRotateSprite;
 					snakeSpriteToDraw.setRotation(90.0f);
 				}
@@ -145,18 +151,16 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 				snakeSpriteToDraw.setRotation(180.0f);
 
 			break;
-		case RightDirection://Done
+		case RightDirection:
 			if (i == 0 && lastHeadDirection != RightDirection)
 			{
 				if (lastHeadDirection == UpDirection)
 				{
-					std::cout << "snake[0] is right dir, lasHeadDir is upDir\n";
 					snakeSpriteToDraw = snakeHeadRotateSprite;
 					snakeSpriteToDraw.setRotation(0.0f);
 				}
 				else if (lastHeadDirection == DownDirection)
 				{
-					std::cout << "snake[0] is right dir, lasHeadDir is downDir\n";
 					snakeSpriteToDraw = snakeHeadRotateFlipSprite;
 					snakeSpriteToDraw.setRotation(180.0f);
 				}
@@ -164,18 +168,16 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 			else
 				snakeSpriteToDraw.setRotation(90.0f);
 			break;
-		case LeftDirection://Done
+		case LeftDirection:
 			if (i == 0 && lastHeadDirection != LeftDirection)
 			{
 				if (lastHeadDirection == UpDirection)
 				{
-					std::cout << "snake[0] is left dir, lasHeadDir is upDir\n";
 					snakeSpriteToDraw = snakeHeadRotateFlipSprite;
 					snakeSpriteToDraw.setRotation(0.0f);
 				}
 				else if (lastHeadDirection == DownDirection)
 				{
-					std::cout << "snake[0] is left dir, lasHeadDir is downtDir\n";
 					snakeSpriteToDraw = snakeHeadRotateSprite;
 					snakeSpriteToDraw.setRotation(180.0f);
 				}
@@ -194,8 +196,6 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 		Place(snakeSpriteToDraw, window, snake[i].x - 0.5f, snake[i].y + 0.5f);
 	}
 }
-
-
 
 void Place(sf::Sprite& sprite, sf::RenderWindow& window, float x, float y)
 {
