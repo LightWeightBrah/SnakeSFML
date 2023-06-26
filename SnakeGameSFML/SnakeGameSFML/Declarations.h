@@ -6,12 +6,13 @@ const int pixelSize = 16;
 const float sizeMultiplier = 2.0f;
 const int size = pixelSize * sizeMultiplier;
 
-const float snakeMoveTimer = 2.15f;
+const float snakeMoveTimer = 0.15f;
 const int snakeInitSize = 4;
 int snakeSpawnY = mapHeight / 2;
 int snakeSpawnX = 5;
 
 int score = 0;
+bool hasLost = false;
 
 enum Direction
 {
@@ -54,6 +55,7 @@ struct Snake
 	sf::Sprite sprite;
 };
 
+void PlayAgain(std::vector<Snake>& snake, Apple& apple);
 void GameOver();
 bool LooseCheck(std::vector<Snake>& snake, int headX, int headY);
 void Scored(std::vector<Snake>& snake, Apple& apple);
@@ -63,7 +65,7 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
     sf::Sprite& snakeBodySprite);
 void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& apple);
 void DrawMap(sf::RenderWindow& window, sf::Sprite& floor1Sprite, sf::Sprite& floor2Sprite, sf::Sprite& wallsprite);
-void HandleSnakeInput(std::vector<Snake>& snake);
+void HandleInput(std::vector<Snake>& snake, Apple& apple);
 void GenerateApple(Apple& apple, std::vector<Snake>& snake);
 void InitSnake(std::vector<Snake>& snake);
 bool IsOnSnake(int& x, int& y, std::vector<Snake>& snake);

@@ -30,7 +30,7 @@ int main()
 		}
 		window.clear();
 
-		HandleSnakeInput(snake);
+		HandleInput(snake, apple);
 		DrawMap(window, floor1Sprite, floor2Sprite, wallsprite);
 		Place(appleSprite, window, apple.position.x, apple.position.y);
 		MoveSnake(snakeMoveClock, snake, apple);
@@ -51,8 +51,16 @@ void InitSnake(std::vector<Snake>& snake)
 	}
 }
 
-void HandleSnakeInput(std::vector<Snake>& snake)
+void HandleInput(std::vector<Snake>& snake, Apple& apple)
 {
+	if (hasLost)
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+			PlayAgain(snake, apple);
+
+		return;
+	}
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) && snake[1].currentDirection != DownDirection)
 		snake[0].currentDirection = UpDirection;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) && snake[1].currentDirection != UpDirection)
@@ -63,35 +71,45 @@ void HandleSnakeInput(std::vector<Snake>& snake)
 		snake[0].currentDirection = RightDirection;
 }
 
-void DrawMap(sf::RenderWindow& window, sf::Sprite& floor1Sprite, sf::Sprite& floor2Sprite, sf::Sprite& wallsprite)
+void PlayAgain(std::vector<Snake>& snake, Apple& apple)
 {
-	sf::Sprite spriteToDraw;
-	int spriteCounter = 0;
-	for (int y = 0; y < mapHeight; y++)
-	{
-		spriteCounter++;
-
-		for (int x = 0; x < mapWidth; x++)
-		{
-			spriteCounter++;
-			spriteToDraw = spriteCounter % 2 == 0 ? floor1Sprite : floor2Sprite;
-
-			if (IsWall(x, y))
-				spriteToDraw = wallsprite;
-
-			Place(spriteToDraw, window, x, y);
-		}
-	}
-	window.draw(scoreText);
-
+	hasLost = false;
+	score = 0;
+	scoreText.setString("Score: " + std::to_string(score));
+	snake.clear();
+	InitSnake(snake);
+	GenerateApple(apple, snake);
 }
 
 void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& apple)
 {
+	if (hasLost)
+		return;
+
 	sf::Time elapsedSnakeMove = snakeMoveClock.getElapsedTime();
 	if (elapsedSnakeMove.asSeconds() > snakeMoveTimer)
 	{
 		snakeMoveClock.restart();
+
+		switch (snake[0].currentDirection)
+		{
+		case UpDirection:
+			if (LooseCheck(snake, snake[0].x, snake[0].y - 1))
+				return ;
+			break;
+		case DownDirection:
+			if (LooseCheck(snake, snake[0].x, snake[0].y + 1))
+				return ;
+			break;
+		case RightDirection:
+			if (LooseCheck(snake, snake[0].x + 1, snake[0].y))
+				return ;
+			break;
+		case LeftDirection:
+			if (LooseCheck(snake, snake[0].x - 1, snake[0].y))
+				return ;
+			break;
+		}
 
 		for (int i = snake.size() - 1; i > 0; i--)
 		{
@@ -103,33 +121,22 @@ void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& appl
 
 		switch (snake[0].currentDirection)
 		{
-			case UpDirection:
-				if (LooseCheck(snake, snake[0].x, snake[0].y - 1))
-					return;
-				snake[0].y--;
-				break;
-			case DownDirection:
-				if (LooseCheck(snake, snake[0].x, snake[0].y + 1))
-					return;
-				snake[0].y++;
-				break;
-			case RightDirection:
-				if (LooseCheck(snake, snake[0].x + 1, snake[0].y))
-					return;
-				snake[0].x++;
-				break;
-			case LeftDirection:
-				if (LooseCheck(snake, snake[0].x - 1, snake[0].y))
-					return;
-				snake[0].x--;
-				break;
+		case UpDirection:
+			snake[0].y--;
+			break;
+		case DownDirection:
+			snake[0].y++;
+			break;
+		case RightDirection:
+			snake[0].x++;
+			break;
+		case LeftDirection:
+			snake[0].x--;
+			break;
 		}
-
 
 		if (snake[0].x == (apple.position.x + 1) && snake[0].y == apple.position.y)
-		{
 			Scored(snake, apple);
-		}
 	}
 }
 
@@ -156,7 +163,7 @@ bool LooseCheck(std::vector<Snake>& snake, int headX, int headY)
 
 void GameOver()
 {
-	std::cout << "lost\n";
+	hasLost = true;
 }
 
 void Scored(std::vector<Snake>& snake, Apple& apple)
@@ -175,7 +182,7 @@ void GenerateApple(Apple& apple, std::vector<Snake>& snake)
 	int previousX = apple.position.x;
 	int previousY = apple.position.y;
 
-	while (IsWall(apple.position.x, apple.position.y) || IsOnSnake(apple.position.x, apple.position.y, snake) 
+	while (IsWall(apple.position.x, apple.position.y) || IsOnSnake(apple.position.x, apple.position.y, snake)
 		|| (apple.position.x == previousX && apple.position.y == previousY))
 	{
 		apple.GenerateRandomPosition();

@@ -9,7 +9,6 @@ sf::Texture snakeHeadTexture;
 sf::Texture snakeBodyTexture;
 sf::Texture snakeTailTexture;
 sf::Texture snakeRotateTexture;
-sf::Texture snakeDeadTexture;
 sf::Texture snakeHeadRotateTexture;
 sf::Texture snakeHeadRotateFlipTexture;
 
@@ -21,12 +20,13 @@ sf::Sprite snakeHeadSprite;
 sf::Sprite snakeBodySprite;
 sf::Sprite snakeTailSprite;
 sf::Sprite snakeRotateSprite;
-sf::Sprite snakeDeadSprite;
 sf::Sprite snakeHeadRotateSprite;
 sf::Sprite snakeHeadRotateFlipSprite;
 
 sf::Font font;
 sf::Text scoreText;
+sf::Text gameOverText;
+
 void LoadTextures()
 {
 	playerTexture.loadFromFile("Graphics/snakeHead.png");
@@ -38,7 +38,6 @@ void LoadTextures()
 	snakeBodyTexture.loadFromFile("Graphics/snakeBody.png");
 	snakeTailTexture.loadFromFile("Graphics/snakeTail.png");
 	snakeRotateTexture.loadFromFile("Graphics/snakeRotate.png");
-	snakeDeadTexture.loadFromFile("Graphics/snakeDead.png");
 	snakeHeadRotateTexture.loadFromFile("Graphics/snakeHeadRotation.png");
 	snakeHeadRotateFlipTexture.loadFromFile("Graphics/snakeHeadFlipRotation.png");
 
@@ -50,7 +49,6 @@ void LoadTextures()
 	snakeBodySprite.setTexture(snakeBodyTexture);
 	snakeTailSprite.setTexture(snakeTailTexture);
 	snakeRotateSprite.setTexture(snakeRotateTexture);
-	snakeDeadSprite.setTexture(snakeDeadTexture);
 	snakeHeadRotateSprite.setTexture(snakeHeadRotateTexture);
 	snakeHeadRotateFlipSprite.setTexture(snakeHeadRotateFlipTexture);
 
@@ -61,6 +59,16 @@ void LoadTextures()
 	scoreText.setStyle(sf::Text::Bold);
 	scoreText.setString("Score: 0");
 	scoreText.setPosition(2.0f, 2.0f);
+
+	gameOverText.setFont(font);
+	gameOverText.setCharacterSize(40);
+	gameOverText.setFillColor(sf::Color::Red);
+	gameOverText.setOutlineColor(sf::Color::Black);
+	gameOverText.setOutlineThickness(5.0f);
+	gameOverText.setStyle(sf::Text::Bold);
+	gameOverText.setString("GAME OVER! PRESS 'SPACE' TO PLAY AGAIN");
+
+	gameOverText.setPosition(mapWidth / 2, 250);
 }
 
 bool CheckIfRotatedSprite(int& i, std::vector<Snake>& snake, sf::Sprite& snakeSpriteToDraw)
@@ -82,23 +90,45 @@ void SetSnakeRotation(int& i, std::vector<Snake>& snake, sf::Sprite& snakeRotati
 	if (i == 0 && i == snake.size() - 1)
 		return;
 
-	if(snake[i+1].x < snake[i].x && snake[i-1].y < snake[i].y)
+	if (snake[i + 1].x < snake[i].x && snake[i - 1].y < snake[i].y)
 		snakeRotationSprite.setRotation(0.0f);
-	else if(snake[i+1].y < snake[i].y && snake[i-1].x < snake[i].x)
+	else if (snake[i + 1].y < snake[i].y && snake[i - 1].x < snake[i].x)
 		snakeRotationSprite.setRotation(0.0f);
 	else if (snake[i + 1].x < snake[i].x && snake[i - 1].y > snake[i].y)
 		snakeRotationSprite.setRotation(-90.0f);
-	else if(snake[i+1].y > snake[i].y && snake[i-1].x < snake[i].x)
+	else if (snake[i + 1].y > snake[i].y && snake[i - 1].x < snake[i].x)
 		snakeRotationSprite.setRotation(-90.0f);
-	else if(snake[i+1].x > snake[i].x && snake[i-1].y > snake[i].y)
+	else if (snake[i + 1].x > snake[i].x && snake[i - 1].y > snake[i].y)
 		snakeRotationSprite.setRotation(180.0f);
-	else if(snake[i+1].y > snake[i].y && snake[i-1].x > snake[i].x)
+	else if (snake[i + 1].y > snake[i].y && snake[i - 1].x > snake[i].x)
 		snakeRotationSprite.setRotation(180.0f);
-	else if(snake[i+1].x > snake[i].x && snake[i-1].y < snake[i].y)
+	else if (snake[i + 1].x > snake[i].x && snake[i - 1].y < snake[i].y)
 		snakeRotationSprite.setRotation(90.0f);
-	else if(snake[i+1].y < snake[i].y && snake[i-1].x > snake[i].x)
+	else if (snake[i + 1].y < snake[i].y && snake[i - 1].x > snake[i].x)
 		snakeRotationSprite.setRotation(90.0f);
 
+}
+
+void DrawMap(sf::RenderWindow& window, sf::Sprite& floor1Sprite, sf::Sprite& floor2Sprite, sf::Sprite& wallsprite)
+{
+	sf::Sprite spriteToDraw;
+	int spriteCounter = 0;
+	for (int y = 0; y < mapHeight; y++)
+	{
+		spriteCounter++;
+
+		for (int x = 0; x < mapWidth; x++)
+		{
+			spriteCounter++;
+			spriteToDraw = spriteCounter % 2 == 0 ? floor1Sprite : floor2Sprite;
+
+			if (IsWall(x, y))
+				spriteToDraw = wallsprite;
+
+			Place(spriteToDraw, window, x, y);
+		}
+	}
+	window.draw(scoreText);
 }
 
 void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& snakeHeadSprite, sf::Sprite& snakeTailSprite,
@@ -147,7 +177,7 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 					snakeSpriteToDraw.setRotation(90.0f);
 				}
 			}
-			else 
+			else
 				snakeSpriteToDraw.setRotation(180.0f);
 
 			break;
@@ -194,6 +224,9 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 			snakeSpriteToDraw.getLocalBounds().width, snakeSpriteToDraw.getLocalBounds().height) / 2.f);
 
 		Place(snakeSpriteToDraw, window, snake[i].x - 0.5f, snake[i].y + 0.5f);
+
+		if (hasLost)
+			window.draw(gameOverText);
 	}
 }
 
