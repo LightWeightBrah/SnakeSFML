@@ -11,7 +11,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(mapWidth * size, mapHeight * size), "Snake Game with SFML");
 	srand(time(0));
 	LoadTextures();
-
+	window.setFramerateLimit(60);
 	Apple apple;
 	std::vector<Snake> snake;
 	InitSnake(snake);
