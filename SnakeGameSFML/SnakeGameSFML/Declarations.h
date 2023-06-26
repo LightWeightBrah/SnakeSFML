@@ -25,8 +25,7 @@ int GetRandom(int lowerBound, int higherBound);
 
 struct Apple
 {
-	int x;
-	int y;
+	sf::Vector2i position;
 
 	Apple()
 	{
@@ -35,8 +34,8 @@ struct Apple
 
 	void GenerateRandomPosition()
 	{
-		x = GetRandom(0, mapWidth - 1);
-		y = GetRandom(0, mapHeight - 1);
+		position.x = GetRandom(0, mapWidth - 1);
+		position.y = GetRandom(0, mapHeight - 1);
 	}
 };
 

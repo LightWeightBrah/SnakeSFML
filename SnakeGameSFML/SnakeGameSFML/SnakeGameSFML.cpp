@@ -31,7 +31,7 @@ int main()
 
 		HandleSnakeInput(snake);
 		DrawMap(window, floor1Sprite, floor2Sprite, wallsprite);
-		Place(appleSprite, window, apple.x, apple.y);
+		Place(appleSprite, window, apple.position.x, apple.position.y);
 		MoveSnake(snakeMoveClock, snake, apple);
 		DrawSnake(snake, window, snakeHeadSprite, snakeTailSprite, snakeBodySprite);
 
@@ -95,9 +95,8 @@ void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& appl
 			snake[i].x = snake[i - 1].x;
 			snake[i].y = snake[i - 1].y;
 			snake[i].currentDirection = snake[i - 1].currentDirection;
-			std::cout << "snake [" << i << "] dir is: " << snake[i].currentDirection << "\n";
 		}
-		std::cout << "\n";
+		std::cout << "snake x " << snake[0].x << " y " << snake[0].y << "\n";
 
 		switch (snake[0].currentDirection)
 		{
@@ -115,7 +114,7 @@ void MoveSnake(sf::Clock& snakeMoveClock, std::vector<Snake>& snake, Apple& appl
 				break;
 		}
 
-		if (snake[0].x == (apple.x + 1) && snake[0].y == apple.y)
+		if (snake[0].x == (apple.position.x + 1) && snake[0].y == apple.position.y)
 		{
 			Scored(snake, apple);
 		}
@@ -135,10 +134,11 @@ void Scored(std::vector<Snake>& snake, Apple& apple)
 
 void GenerateApple(Apple& apple, std::vector<Snake>& snake)
 {
-	int previousX = apple.x;
-	int previousY = apple.y;
+	int previousX = apple.position.x;
+	int previousY = apple.position.y;
 
-	while (IsWall(apple.x, apple.y) || IsOnSnake(apple.x, apple.y, snake) || (apple.x == previousX && apple.y == previousY))
+	while (IsWall(apple.position.x, apple.position.y) || IsOnSnake(apple.position.x, apple.position.y, snake) 
+		|| (apple.position.x == previousX && apple.position.y == previousY))
 	{
 		apple.GenerateRandomPosition();
 	}

@@ -64,22 +64,23 @@ void SetSnakeRotation(int& i, std::vector<Snake>& snake, sf::Sprite& snakeRotati
 	if (i == 0 && i == snake.size() - 1)
 		return;
 
-	if (snake[i - 1].currentDirection == RightDirection && snake[i + 1].currentDirection == UpDirection)
+	if(snake[i+1].x < snake[i].x && snake[i-1].y < snake[i].y)
 		snakeRotationSprite.setRotation(0.0f);
-	else if (snake[i - 1].currentDirection == DownDirection && snake[i + 1].currentDirection == LeftDirection)
+	else if(snake[i+1].y < snake[i].y && snake[i-1].x < snake[i].x)
 		snakeRotationSprite.setRotation(0.0f);
-	else if (snake[i - 1].currentDirection == LeftDirection && snake[i + 1].currentDirection == DownDirection)
-		snakeRotateSprite.setRotation(180.0f);
-	else if(snake[i-1].currentDirection == UpDirection && snake[i+1].currentDirection == RightDirection)
-		snakeRotateSprite.setRotation(180.0f);
-	else if(snake[i-1].currentDirection == UpDirection && snake[i+1].currentDirection == LeftDirection)
-		snakeRotateSprite.setRotation(-90.0f);
-	else if(snake[i-1].currentDirection == RightDirection && snake[i+1].currentDirection == DownDirection)
-		snakeRotateSprite.setRotation(-90.0f);
-	else if(snake[i-1].currentDirection == DownDirection && snake[i+1].currentDirection == RightDirection)
-		snakeRotateSprite.setRotation(90.0f);
-	else if(snake[i-1].currentDirection == LeftDirection && snake[i+1].currentDirection == UpDirection)
-		snakeRotateSprite.setRotation(90.0f);
+	else if (snake[i + 1].x < snake[i].x && snake[i - 1].y > snake[i].y)
+		snakeRotationSprite.setRotation(-90.0f);
+	else if(snake[i+1].y > snake[i].y && snake[i-1].x < snake[i].x)
+		snakeRotationSprite.setRotation(-90.0f);
+	else if(snake[i+1].x > snake[i].x && snake[i-1].y > snake[i].y)
+		snakeRotationSprite.setRotation(180.0f);
+	else if(snake[i+1].y > snake[i].y && snake[i-1].x > snake[i].x)
+		snakeRotationSprite.setRotation(180.0f);
+	else if(snake[i+1].x > snake[i].x && snake[i-1].y < snake[i].y)
+		snakeRotationSprite.setRotation(90.0f);
+	else if(snake[i+1].y < snake[i].y && snake[i-1].x > snake[i].x)
+		snakeRotationSprite.setRotation(90.0f);
+
 }
 
 void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& snakeHeadSprite, sf::Sprite& snakeTailSprite,
@@ -118,11 +119,6 @@ void DrawSnake(std::vector<Snake>& snake, sf::RenderWindow& window, sf::Sprite& 
 			snakeSpriteToDraw.getLocalBounds().width, snakeSpriteToDraw.getLocalBounds().height) / 2.f);
 
 		Place(snakeSpriteToDraw, window, snake[i].x - 0.5f, snake[i].y + 0.5f);
-
-		//TESTING ZONE
-		sf::Sprite temp = snakeRotateSprite;
-		temp.setRotation(90.0f);
-		Place(temp, window, 10- 0.5f, 2+ 0.5f);
 	}
 }
 
